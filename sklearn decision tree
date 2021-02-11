@@ -1,0 +1,63 @@
+# Memasukkan data csv kedalam notebook imb
+import types
+import pandas as pd
+from botocore.client import Config
+import ibm_boto3
+
+def __iter__(self): return 0
+
+# @hidden_cell
+# The following code accesses a file in your IBM Cloud Object Storage. It includes your credentials.
+# You might want to remove those credentials before you share the notebook.
+client_ef795513d32540c68ad0d8deee556ad6 = ibm_boto3.client(service_name='s3',
+    ibm_api_key_id='4Hr0MCAEvIHLzGjI0h3VlNY5ZqUHGImdm_Dq2OXduENg',
+    ibm_auth_endpoint="https://iam.cloud.ibm.com/oidc/token",
+    config=Config(signature_version='oauth'),
+    endpoint_url='https://s3-api.us-geo.objectstorage.service.networklayer.com')
+
+body = client_ef795513d32540c68ad0d8deee556ad6.get_object(Bucket='coba-donotdelete-pr-rzbgmmutllhw3e',Key='Iris.csv')['Body']
+# add missing __iter__ method, so pandas accepts body as file-like object
+if not hasattr(body, "__iter__"): body.__iter__ = types.MethodType( __iter__, body )
+
+iris = pd.read_csv(body)
+iris.head()
+
+# ctt : bisa dilakukan secara manual
+
+# menghilangkan kolom yang tidak penting
+iris.drop('Id',axis=1,inplace=True)
+
+# memisahkan atribut dan label
+X = iris[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm' ]]
+y = iris['Species']
+
+from sklearn.tree import DecisionTreeClassifier
+ 
+# membuat model Decision Tree
+tree_model = DecisionTreeClassifier() 
+ 
+# melakukan pelatihan model terhadap data
+tree_model.fit(X, y)
+
+# prediksi model dengan tree_model.predict([[SepalLength, SepalWidth, PetalLength, PetalWidth]])
+tree_model.predict([[6.2, 3.4, 5.4, 2.3]])
+
+# melihat visualisasi dari decision tree yang kita buat terhadap data dengan menggunakan library Graphviz.
+from sklearn.tree import export_graphviz
+export_graphviz(
+    tree_model,
+    out_file = "iris_tree.dot",
+    feature_names = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm'],
+    class_names = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica' ],
+    rounded= True,
+    filled =True
+)
+
+# Mengirim berkas file gambar klasifikasi kedalam project asset// Kuhusus untuk watson studio
+import os
+os.listdir()
+
+client_ef795513d32540c68ad0d8deee556ad6.upload_file('iris_tree.dot', 'coba-donotdelete-pr-rzbgmmutllhw3e', 'iris_tree.dot')
+# kode dapat dilihat pada saat kita mengimport data cxv tadi dengan cara manual
+
+# Membuka data asset kemudian melakukan download pada file iris_tree.dot kemudian melakukan konversi ke png
