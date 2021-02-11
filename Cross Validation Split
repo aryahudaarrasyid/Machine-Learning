@@ -1,0 +1,31 @@
+# Menguji model yang dimiliki memiliki performa yang baik 
+
+Algoritma
+
+1. Impor library yang dibutuhkan.
+2. Pisahkan antara atribut dan label pada dataset.
+3. Buat model decision tree.
+4. Hitung hasil cross validation dari model dengan fungsi cross_val_score().
+
+import sklearn
+from sklearn import datasets
+ 
+# Load iris dataset
+iris = datasets.load_iris()
+
+# mendefinisikan atribut dan label pada dataset
+x=iris.data
+y=iris.target
+
+from sklearn import tree
+ 
+# membuat model dengan decision tree ckassifier
+clf = tree.DecisionTreeClassifier()
+
+from sklearn.model_selection import cross_val_score
+ 
+# mengevaluasi performa model dengan cross_val_score
+scores = cross_val_score(clf, x, y, cv=5)
+## Ket : cv adalah jumlah fold atau clasifikasi dari dataset
+
+#>> Apabila nilai score bernilai lebih dari 0.85 maka dapat dikatakan model dapat bekerja dengan baik
