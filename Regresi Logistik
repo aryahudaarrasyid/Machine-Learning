@@ -32,6 +32,10 @@ model = linear_model.LogisticRegression()
 model.fit(X_train, Y_train)
 
 from sklearn.preprocessing import StandardScaler
+
+# Melihat model yang didatapat (Melihat nilai intercept dan koefisien regresinya)
+model.intercept_
+model.coef_
  
 # uji akurasi model
 model.score(X_test, Y_test)
