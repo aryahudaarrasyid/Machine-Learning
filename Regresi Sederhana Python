@@ -1,3 +1,4 @@
+# Import data terlebih dahulu
 # Memasukkan data dengan menggunakan array di numpy
 import numpy as np
 bedrooms = np.array([1,1,2,2,3,4,4,5,5,5])
