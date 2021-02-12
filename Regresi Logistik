@@ -1,0 +1,37 @@
+# Melihat ada atau tidak nilai kosong pada data, dan sekaligus melihat tipe data
+df.info()
+
+# Menghapus kolom yang tidak diperlukan
+data = df.drop(columns = ['User ID'])
+
+# Melakukan Oneshot Encoding / Membuat data Kategori menjadi bentuk binner
+data = pd.get_dummies(data)
+print(data)
+
+# Memisahkan data menjadi X dan Y
+predict = ['Age', 'EstimatedSalary', 'Gender_Female', 'Gender_Male']
+X = data[predict]
+Y = data['Purchased']
+
+# Melakukan normalisasi pada data
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(X)
+scaled_data = scaler.transform(X)
+scaled_data = pd.DataFrame(scaled_data, columns= X.columns)
+scaled_data.head()
+
+# Membagi data menjadi data train dan data test
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(scaled_data, Y, test_size=0.2, random_state=1)
+
+from sklearn import linear_model
+ 
+# latih model dengan fungsi fit
+model = linear_model.LogisticRegression()
+model.fit(X_train, Y_train)
+
+from sklearn.preprocessing import StandardScaler
+ 
+# uji akurasi model
+model.score(X_test, Y_test)
