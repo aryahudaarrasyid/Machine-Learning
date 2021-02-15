@@ -1,0 +1,24 @@
+>> Overfitting
+Overfitting terjadi ketika model memiliki prediksi yang terlalu baik pada data training, 
+namun prediksinya buruk pada data testing. Ketika sebuah model overfit, model tidak dapat 
+melakukan generalisasi dengan baik sehingga akan membuat banyak kesalahan dalam memprediksi 
+data-data baru yang ditemui pada tahap produksi.
+
+Beberapa cara untuk menghindari overfitting yaitu:
+
+1. Memilih model yang lebih sederhana, contohnya pada data yang memiliki pola linier menggunakan model regresi linear daripada model decision tree.
+
+2. Mengurangi dimensi data contohnya dengan metode PCA yang telah Anda pelajari.
+
+3. Menambahkan data untuk pelatihan model jika memungkinkan.
+
+>> Underfitting
+Sebuah model dapat dikatakan underfit jika memiliki eror yang tinggi pada data training. 
+Underfitting menandakan bahwa model tersebut belum cukup baik dalam mengenali pola yang 
+terdapat pada data latih. Misalnya ketika sebuah model dilatih pada data latih yang memiliki 
+50 sampel coklat dan 50 sampel kacang. Setelah pembelajaran dengan data latih, model malah 
+mengenali pada data latih terdapat 90 sampel coklat dan 10 sampel kacang.
+
+>> Goog Fit
+Model ML yang baik adalah model good fit atau model yang tidak underfit maupun overfit. 
+Sebuah model good fit akan memprediksi lebih baik dan membuat lebih sedikit kesalahan di tahap produksi.
