@@ -1,0 +1,39 @@
+# Import Data set
+#cek Null pada data
+df.info()
+
+# memisahkan atribut pada dataset dan menyimpannya pada sebuah variabel
+X = df[df.columns[:8]]
+ 
+# memisahkan label pada dataset dan menyimpannya pada sebuah variabel
+y = df['Outcome']
+
+from sklearn.preprocessing import StandardScaler
+ 
+# standarisasi nilai-nilai dari dataset
+scaler = StandardScaler()
+scaler.fit(X)
+X = scaler.transform(X)
+
+from sklearn.model_selection import train_test_split
+ 
+# memisahkan data untuk training dan testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=42)
+    
+from sklearn.svm import SVC
+ 
+# membuat objek SVC dan memanggil fungsi fit untuk melatih model
+clf = SVC()
+clf.fit(X_train, y_train)
+
+# Menampilkan skor akurasi prediksi
+clf.score(X_test, y_test)
+
+# Memprediksi semua X_testnya
+y_pred = clf.predict(X_test)
+
+# Jika ingin men test satu-satu (terdapat data baru yang akan dimasukkan) maka
+# Anggap saja data ke 8 tidak ada di X_test[7] hanya untuk memudahkan untuk mengopynya
+X_test[7]
+clf.predict([[-1.14185152, -0.12188771, -3.57259724, -1.28821221, -0.69289057,0.22939662,  1.38962817,  0.91546889]])
