@@ -1,0 +1,28 @@
+Tahap - tahap dalam melakukan melakukan Machine Learning
+1. Proses pengumpulan data.
+
+2. Exploratory Data Analysis
+Proses melihat kualitas data untuk meminimalisir kesalahan di kemudian hari.
+Pada proses ini dilakukan investigasi awal untuk menemukan anmenemukan pola, 
+anomali, menguji hipotesis , memahami distribusi, frekuensi, hubungan antar 
+variabel, dan memeriksa asumsi dengan teknik statistik dan representasi grafik. 
+Pada umumnya EDA dilakukan dengan dua cara, yaitu univariate analysis, bivariate analysis, dan multivariate analysis.
+
+3. Data preprocessing
+data preprocessing adalah proses data cleaning dan data transformation.
+Beberapa hal yang bisa dilakukan dalam proses data cleaning adalah: 
+penanganan missing value, data yang tidak konsisten, duplikasi data, 
+ketidakseimbangan data, dll. Sementara beberapa hal yang bisa dilakukan 
+untuk proses transformasi data adalah: scaling atau merubah skala data agar
+sesuai dengan skala tertentu, standarisasi, normalisasi, mengonversi 
+data menjadi variabel kategori, dan sebagainya. Tidak lupa pula, proses 
+train-test split yang pernah kita pelajari pada modul sebelumnya juga merupakan bagian dari data preprocessing. 
+
+4. Model Evaluation
+
+5. Deployment
+Ketika model dievaluasi, model siap untuk dipakai pada tahap produksi. Caranya adalah dengan menyimpan model 
+yang telah dilatih dari tahap preprocessing hingga pipeline prediksi. Kemudian deploy model tersebut ke tahap
+produksi untuk membuat prediksi dengan memanggil kode predict()-nya,
+
+6. Monitoring
