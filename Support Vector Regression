@@ -1,0 +1,34 @@
+# Import data terlebih dahulu
+
+# Cek 5 baris data
+data.head()
+
+# Cek apakah ada data yang Null
+data.info()
+
+import numpy as np
+ 
+# memisahkan atribut dan label
+X = data['YearsExperience']
+y = data['Salary']
+ 
+# mengubah bentuk atribut/dilakukan jika hanya ada 1 label X
+X = X[:,np.newaxis]
+
+from sklearn.svm import SVR
+ 
+# membangun model dengan parameter C, gamma, dan kernel
+model  = SVR(C=1000, gamma=0.05, kernel='rbf')
+ 
+# melatih model dengan fungsi fit
+model.fit(X,y)
+
+import matplotlib.pyplot as plt
+ 
+# memvisualisasikan model
+plt.scatter(X, y)
+plt.plot(X, model.predict(X))
+
+# Hasil visualisasi menunjukkan bahwa model yang kita kembangkan, belum mampu menyesuaikan terhadap pola pada data dengan baik.
+# Nah, pada modul berikutnya kita akan mencoba meningkatkan performa model kita dengan menggunakan grid search.
+
