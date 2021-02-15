@@ -27,6 +27,12 @@ pca_attributes = pca.fit_transform(X_train)
  
 # melihat variance dari setiap atribut
 pca.explained_variance_ratio_
+
+# PCA dengan 2 principal component
+pca = PCA(n_components = 2)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.fit_transform(X_test)
+
 # uji akurasi classifier
 model2 = decision_tree.fit(X_train_pca, y_train)
 model2.score(X_test_pca, y_test)
