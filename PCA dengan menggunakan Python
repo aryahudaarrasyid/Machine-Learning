@@ -36,3 +36,14 @@ X_test_pca = pca.fit_transform(X_test)
 # uji akurasi classifier
 model2 = decision_tree.fit(X_train_pca, y_train)
 model2.score(X_test_pca, y_test)
+
+import matplotlib.pyplot as plt
+plt.figure()
+names = ['setosa' 'versicolor' 'virginica']
+colors = ['navy', 'turquoise', 'darkorange']
+
+# plot 2D PCA
+for color, i, target_name in zip(colors, [0, 1, 2], target_names):
+    plt.scatter(X_train_pca[y_train == i, 0], X_train_pca[y_train == i, 1], color=color, label=target_name)
+plt.legend(loc='best', shadow=False, scatterpoints=1)
+plt.title('PCA of IRIS dataset')
