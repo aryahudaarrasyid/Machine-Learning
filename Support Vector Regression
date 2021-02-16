@@ -52,6 +52,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR
  
 # membangun model dengan parameter C, gamma, dan kernel
+# daftar kernel, kernel{‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’},
 model = SVR()
 parameters = {
     'kernel': ['rbf'],
