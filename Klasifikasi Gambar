@@ -1,0 +1,160 @@
+# Import dan lihat tensor flow versi
+import tensorflow as tf
+print(tf.__version__)
+
+# Jika tensorflow tipe masih 1 bukan 2.3.0 maka instal tf 2.3.0
+import sys
+!{sys.executable} -m pip install tensorflow==2.3.0
+
+# Persiapkan data gambar dalam bentuk zip kemudian input datanya setelah itu lihat Credentialsnya
+# Langkah selanjutnya adalah men-download berkas tersebut agar bisa dipakai di dalam notebook. 
+# Tambahkan kode berikut ini, dan sesuaikan dengan credentials yang ada (sesuaikan dengan credentials di notebook Anda).
+credentials_1 = {
+    'IAM_SERVICE_ID': 'iam-ServiceId-8e8c3297-aba4-4bcb-829a-4683d4e3eaab',
+    'IBM_API_KEY_ID': '4Hr0MCAEvIHLzGjI0h3VlNY5ZqUHGImdm_Dq2OXduENg',
+    'ENDPOINT': 'https://s3-api.us-geo.objectstorage.service.networklayer.com',
+    'IBM_AUTH_ENDPOINT': 'https://iam.cloud.ibm.com/oidc/token',
+    'BUCKET': 'coba-donotdelete-pr-rzbgmmutllhw3e',
+    'FILE': 'messy-vs-clean-room.zip'
+}
+
+import ibm_boto3
+from ibm_botocore.client import Config
+ 
+cos = ibm_boto3.client(service_name='s3',
+                         ibm_api_key_id=credentials_1['IBM_API_KEY_ID'],
+                         ibm_service_instance_id=credentials_1['IAM_SERVICE_ID'],
+                         ibm_auth_endpoint="https://iam.cloud.ibm.com/oidc/token",
+                         config=Config(signature_version='oauth'),
+                         endpoint_url=credentials_1['ENDPOINT'])
+                         
+# Lakukan download dan ubah nama dari data
+cos.download_file(Bucket=credentials_1['BUCKET'],Key='messy-vs-clean-room.zip',Filename="messy_vs_clean_room.zip")
+
+# Pastikan data sudah diunduh ke dalam notebook
+import os
+ 
+os.listdir()
+
+# melakukan ekstraksi pada file zip
+import zipfile
+local_zip = 'messy_vs_clean_room.zip'
+zip_ref = zipfile.ZipFile(local_zip, 'r')
+zip_ref.extractall()
+zip_ref.close()
+ 
+base_dir = 'images'
+train_dir = os.path.join(base_dir, 'train')
+validation_dir = os.path.join(base_dir, 'val')
+
+os.listdir('images/train')
+
+os.listdir('images/val')
+
+# membuat direktori ruangan rapi pada direktori data training
+train_clean_dir = os.path.join(train_dir, 'clean')
+ 
+# membuat direktori ruangan berantakan pada direktori data training
+train_messy_dir = os.path.join(train_dir, 'messy')
+ 
+# membuat direktori ruangan rapi pada direktori data validasi
+validation_clean_dir = os.path.join(validation_dir, 'clean')
+ 
+# membuat direktori ruangan berantakan pada direktori data validasi
+validation_messy_dir = os.path.join(validation_dir, 'messy')
+
+# Langkah selanjutnya adalah kita membuat sebuah objek ImageDataGenerator untuk data training dan data testing. 
+# Image data generator adalah sebuah fungsi yang sangat berguna untuk mempersiapkan data latih dan data testing yang akan diberikan ke model. 
+# Beberapa kemudahan yang disediakan Image data generator adalah, preprocessing data, pelabelan sampel otomatis, dan augmentasi gambar.
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+ 
+train_datagen = ImageDataGenerator(
+                    rescale=1./255,
+                    rotation_range=20,
+                    horizontal_flip=True,
+                    shear_range = 0.2,
+                    fill_mode = 'nearest')
+ 
+test_datagen = ImageDataGenerator(
+                    rescale=1./255,
+                    rotation_range=20,
+                    horizontal_flip=True,
+                    shear_range = 0.2,
+                    fill_mode = 'nearest')
+
+# Lalu kita dapat menggunakan objek image data generator sebelumnya untuk mempersiapkan data latih yang akan dipelajari oleh model.
+train_generator = train_datagen.flow_from_directory(
+        train_dir,  # direktori data latih
+        target_size=(150, 150),  # mengubah resolusi seluruh gambar menjadi 150x150 piksel
+        batch_size=4,
+        # karena kita merupakan masalah klasifikasi 2 kelas maka menggunakan class_mode = 'binary'
+        class_mode='binary')
+ 
+validation_generator = test_datagen.flow_from_directory(
+        validation_dir, # direktori data validasi
+        target_size=(150, 150), # mengubah resolusi seluruh gambar menjadi 150x150 piksel
+        batch_size=4, # karena kita merupakan masalah klasifikasi 2 kelas maka menggunakan class_mode = 'binary'
+        class_mode='binary')
+        
+# Setelah data telah siap, kita bisa membangun arsitektur sebuah CNN.
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# compile model dengan 'adam' optimizer loss function 'binary_crossentropy'
+model.compile(loss='binary_crossentropy',
+              optimizer='Adam',
+              metrics=['accuracy'])
+              
+# latih model dengan model.fit 
+model.fit(
+      train_generator,
+      steps_per_epoch=25,  # berapa batch yang akan dieksekusi pada setiap epoch
+      epochs=100, # tambahkan eposchs jika akurasi model belum optimal
+      validation_data=validation_generator, # menampilkan akurasi pengujian data validasi
+      validation_steps=5,  # berapa batch yang akan dieksekusi pada setiap epoch
+      verbose=2)
+
+# Unduh dan input data yang ingin di test kedalam notebook
+cos.download_file(Bucket=credentials_1['BUCKET'],Key='contoh.jpg',Filename="contoh.jpg")
+
+# Install library keras kedalam notebook
+import sys
+!{sys.executable} -m pip install keras
+
+# Kode di bawah memungkinkan kita untuk melakukan resize pada berkas gambar yang kita pilih dan mengubahnya menjadi larik numpy. 
+# Setelah itu lakukan Prediksi dari model kita
+import numpy as np
+from keras.preprocessing import image
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+%matplotlib inline
+ 
+# change it to your filename
+fn = 'sample_room_image.jpg'
+ 
+# predicting images
+path = fn
+img = image.load_img(path, target_size=(150,150))
+imgplot = plt.imshow(img)
+x = image.img_to_array(img)
+x = np.expand_dims(x, axis=0)
+ 
+images = np.vstack([x])
+classes = model.predict(images, batch_size=10)
+  
+print(fn)
+if classes==0:
+  print('clean')
+else:
+  print('messy')
