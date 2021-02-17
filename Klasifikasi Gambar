@@ -141,7 +141,7 @@ import matplotlib.image as mpimg
 %matplotlib inline
  
 # change it to your filename
-fn = 'sample_room_image.jpg'
+fn = 'contoh.jpg' #Sesuaikan dengan nama data yang diunduh
  
 # predicting images
 path = fn
