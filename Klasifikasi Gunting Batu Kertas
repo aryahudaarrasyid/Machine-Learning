@@ -8,8 +8,6 @@ zip_ref = zipfile.ZipFile(local_zip, 'r')
 zip_ref.extractall()
 zip_ref.close()
 
-
-
 train_datagen = ImageDataGenerator(
                     rescale=1./255,
                     rotation_range=20,
@@ -18,24 +16,25 @@ train_datagen = ImageDataGenerator(
                     fill_mode = 'nearest',
                     validation_split=0.4)
 
+base_dir = 'rockpaperscissors/rps-cv-images'
 train_generator = train_datagen.flow_from_directory(
         base_dir,  
-        target_size=(100, 150),  
+        target_size=(150, 150),  
         batch_size=4,
         class_mode='categorical',
         subset='training'
         )
- 
+
 validation_generator = train_datagen.flow_from_directory(
         base_dir, 
-        target_size=(100, 150), 
+        target_size=(150, 150), 
         batch_size=4, 
         class_mode='categorical',
         subset='validation'
         )
-
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(16, (3,3), activation='relu', input_shape=(100, 150, 3)),
+        
+cnn_mod = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(16, (3,3), activation='relu', input_shape=(150, 150, 3)),
     tf.keras.layers.MaxPooling2D(2, 2),
     tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
     tf.keras.layers.MaxPooling2D(2,2),
@@ -48,14 +47,41 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(3, activation='softmax')
 ])
 
-model.compile(loss='categorical_crossentropy',
+cnn_mod.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-model.fit(
+cnn_mod.fit(
       train_generator,
       steps_per_epoch=25,
-      epochs=20,
+      epochs=100,
       validation_data=validation_generator,
       validation_steps=5,
       verbose=2)
+ 
+import numpy as np
+from keras.preprocessing import image
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from google.colab import files 
+%matplotlib inline
+
+upload = files.upload()
+
+for fn in upload.keys():
+  path = fn
+  img = image.load_img(path, target_size=(150,150))
+  imgplot = plt.imshow(img)
+  x = image.img_to_array(img)
+  x = np.expand_dims(x, axis=0)
+  images = np.vstack([x])
+  classes = cnn_mod.predict(images, batch_size=10)
+  print(fn)
+  if classes[0][0]==1:
+    print('paper')
+  elif classes[0][1]==1:
+    print('rock')
+  elif classes[0][2]==1:
+    print('scissors')
+  else:
+    print('unreadable')
