@@ -32,7 +32,11 @@ validation_generator = train_datagen.flow_from_directory(
         class_mode='categorical',
         subset='validation'
         )
-        
+
+import numpy as np
+TRAIN_STEPS_PER_EPOCH = Train_Len/Batch_size # Isi dengan angka
+VAL_STEPS_PER_EPOCH = Val_Len/Batch_size # Isi dengan angka
+
 cnn_mod = tf.keras.models.Sequential([
     tf.keras.layers.Conv2D(16, (3,3), activation='relu', input_shape=(150, 150, 3)),
     tf.keras.layers.MaxPooling2D(2, 2),
@@ -44,7 +48,7 @@ cnn_mod = tf.keras.models.Sequential([
     tf.keras.layers.MaxPooling2D(2,2),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(3, activation='softmax')
+    tf.keras.layers.Dense(3, activation='softmax') # (..., actv=..) isi dengan banyak label dan softmax untuk lebih dari 2 dan sigmoid untuk biner
 ])
 
 cnn_mod.compile(loss='categorical_crossentropy',
@@ -53,10 +57,11 @@ cnn_mod.compile(loss='categorical_crossentropy',
 
 cnn_mod.fit(
       train_generator,
-      steps_per_epoch=25,
-      epochs=100,
+      steps_per_epoch=TRAIN_STEPS_PER_EPOCH,
+      epochs=200,
+      callbacks=[callbacks],
       validation_data=validation_generator,
-      validation_steps=5,
+      validation_steps=VAL_STEPS_PER_EPOCH,
       verbose=2)
  
 import numpy as np
